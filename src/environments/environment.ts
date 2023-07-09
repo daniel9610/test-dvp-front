@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,  
-  Github_api_url:"https://api.github.com/search/",
+  Github_api_url:"https://api.github.com/",
+  
 };
 
 //     appId: "1:285019118535:web:db9e194d4a19da22"

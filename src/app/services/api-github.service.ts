@@ -28,6 +28,10 @@ export class ApiGithubService {
 //   }
 
   public getUsersForUsername(api_consult:string, username:string) {
+    return this.http.get<any>(this.api_url+api_consult+username+'&per_page=10').pipe(map(this.extractData));
+  }
+
+  public getUserDetails(api_consult:string, username:string) {
     return this.http.get<any>(this.api_url+api_consult+username).pipe(map(this.extractData));
   }
 

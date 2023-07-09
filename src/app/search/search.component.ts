@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiGithubService } from '../services/api-github.service';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-search',
@@ -12,6 +15,20 @@ export class SearchComponent implements OnInit {
   public users:any = [];
   public myForm!:FormGroup;
   nameButton: any;
+  forbiddenValues:string[] = ['doublevpartners', 'hola'];
+  errors:any;
+  chart: any;
+  chart_data:any = { "user": 10,
+                      "user2":20,
+                      "user3":30,
+                      "user4":12,
+                      "user5":40,
+                      "user6":13,
+                      "user7":15,
+                      "user8":2,
+                      "user9":4,
+                      "user10":5
+                   };
 
   constructor(
     private api:ApiGithubService,
@@ -19,63 +36,83 @@ export class SearchComponent implements OnInit {
     ) { }
 
   ngOnInit() {
+    console.log(this.users);
     this.myForm = this.formBuilder.group({
-      username: ['', [Validators.required, Validators.minLength(1)]],
+      username: ['', [Validators.required, Validators.minLength(4), this.isForbidden(this.forbiddenValues)]],
      });
+
+
+      
   }
   get f() { return this.myForm.controls; }
+  
 
   onSubmit(){
 
     const form = this.myForm.value;
-    // if(form.parent_id==""){
-    //   this.myForm.controls.parent_id.setValue("Na");
-    // }
-    // console.log(this.myForm.controls.parent_id)
-
     if(this.myForm.valid){
+      this.createChart();
       this.nameButton = 'Enviando';
-      this.api.getUsersForUsername('users?q=', form.username).subscribe(
-          result => {
-        console.log(result);
+      this.api.getUsersForUsername('search/users?q=', form.username).subscribe(
+          (result:any) => {
+        console.log(result.items);
 
-    //         if(result){
-    //           Swal.fire({
-    //             title: 'Vehículo registrado exitosamente',
-    //             showConfirmButton: true,
-    //             confirmButtonText: 'Entendido',
-    //             confirmButtonColor: '#008000'
-    //           });
-    //           this.myForm.reset();
-    //         }
-    //       },
-    //       error => {
-    //         Swal.fire({
-    //           title: 'Error API.'
-    //         });
-    //       });
-    //   this.nameButton = 'Enviar';
-    // }else if(this.myForm.invalid){
-    //   console.log(this.myForm);
-    //   Swal.fire({
-    //     title: 'Formulario inválido',
-    //     text: 'Diligencie todos los campos del formulario',
-    //     cancelButtonText: 'Ok'
+        if(result){
+          this.users = [];
+          for(let i=0;i<result.items.length;i++){
+            this.users.push(result.items[i]);
+          }
+  
+          console.log(this.users);
+
+        }
       });
+    }else if(this.myForm.invalid){
+        console.log(this.myForm);
+        Swal.fire({
+          title: 'Formulario inválido',
+          text: 'Valores de búsqueda inválidos',
+          cancelButtonText: 'Ok'
+        });
+    }
+    
+  }
+
+  cleanUsers(){
+    if(this.users.length > 0 ){
+      this.users = [];
+      this.myForm.reset();
+      this.chart.destroy();
     }
   }
 
-  getUsers( username:string ){
-    console.log(username);
-    this.api.getUsersForUsername('users?q=', username).subscribe(
-      (result:any) => {
-        if(result){
-          this.users = [];
-          for(let i=0;i<result.length;i++){
-            this.users.push(result[i]);
-          }
-        }
+  isForbidden(forbiddenValues: string[]): ValidatorFn {
+    return (c: AbstractControl): { [key: string]: boolean } | null => {
+      if (forbiddenValues.indexOf(c.value) !== -1) {
+        return { 'forbiddenValues': true };
+      }
+      return null;
+    };
+  }
+
+  searchError(){
+    this.errors = this.myForm.controls['username'].errors;
+    console.log(this.errors.hasOwnProperty('minlength'));
+  }
+
+  createChart(){
+    this.users
+    this.chart = new Chart("MyChart", {
+      type: 'bar', //this denotes tha type of chart
+      data: {
+        datasets: [{
+          label:'Followers',
+          data: this.chart_data,
+        }]
       },
-    );
+      options: {
+        aspectRatio:2.5
+      }
+    });
   }
 }

@@ -88,8 +88,7 @@ body {
 
 .wrapper a {
     text-decoration: none;
-    font-size: 0.8rem;
-    color: #03A9F4;
+    background-color: #ecf0f3;
 }
 
 .wrapper a:hover {
@@ -101,4 +100,10 @@ body {
         margin: 30px 20px;
         padding: 40px 15px 15px 15px;
     }
+}
+
+#divChart{
+    display: block;
+    width: 400px;
+    height: 400px;
 }

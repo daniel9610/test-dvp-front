@@ -5,14 +5,50 @@
     <div class="text-center mt-4 name">
         Usuarios GitHub
     </div>
-    <form class="p-3 mt-3" [formGroup]="myForm" (ngSubmit)="onSubmit()">
-        <div class="form-field d-flex align-items-center">
-            <span class="far fa-user"></span>
-            <input type="text" name="userName" id="userName" placeholder="Usuario" formControlName="username" id="username" required>
+
+    <div *ngIf="users.length == 0; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+        <!-- Content to render when condition is true. -->
+        <!-- form -->
+        <form class="p-3 mt-3" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="userName" id="userName" placeholder="Usuario" formControlName="username" id="username" required>
+            </div>
+            <div *ngIf="myForm.valid; then thenBlock else elseBlock"></div>
+            <ng-template #thenBlock>
+                <button class="btn mt-3" type="submit" [disabled]="!myForm.valid">Buscar</button>
+            </ng-template>
+            <ng-template #elseBlock>
+                <button class="btn mt-3" type="submit" [disabled]="!myForm.valid">Escribe 4 letras como mínimo</button>
+            </ng-template>
+
+        </form>
+        <div class="text-center fs-6">
+            <a target="_blank" href="https://www.linkedin.com/in/daniel-esteban-jimenez-morales">LinkedIn</a> or <a target="_blank" href="https://github.com/daniel9610/test-dvp-front">GitHub</a>
         </div>
-        <button class="btn mt-3" type="submit" >Buscar</button>
-    </form>
-    <div class="text-center fs-6">
-        <a href="#">LinkedIn</a> or <a href="#">GitHub</a>
+        <!-- form close -->
+    </ng-template>
+    <ng-template #elseBlock>
+        <!-- content to render if condition is false -->
+            <table class="table">
+              <tr >
+                <th>Usuario</th>
+                <th>Id</th>
+              </tr>
+              <tr *ngFor="let user of users">
+                <td>
+                    <a [routerLink]="['/profile', user.login]">
+                        {{ user.login }}
+                    </a>
+                </td>
+                <td>{{user.id}}</td>
+              </tr>
+            </table>
+          
+        <button class="btn mt-3" (click)="cleanUsers()">Atras</button>
+    </ng-template>
+    <div class="chart-container">
+        <canvas  id="MyChart" >{{ chart }}</canvas>
     </div>
 </div>
