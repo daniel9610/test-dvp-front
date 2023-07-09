@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit, OnDestroy{
       (result:any) => {
           if(result){
             this.user_data = result;
-            console.log(this.user_data);
+            // console.log(this.user_data);
           }
       });
     });

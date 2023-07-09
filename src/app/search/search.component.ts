@@ -36,7 +36,7 @@ export class SearchComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    console.log(this.users);
+    // console.log(this.users);
     this.myForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(4), this.isForbidden(this.forbiddenValues)]],
      });
@@ -55,7 +55,7 @@ export class SearchComponent implements OnInit {
       this.nameButton = 'Enviando';
       this.api.getUsersForUsername('search/users?q=', form.username).subscribe(
           (result:any) => {
-        console.log(result.items);
+        // console.log(result.items);
 
         if(result){
           this.users = [];
@@ -63,12 +63,12 @@ export class SearchComponent implements OnInit {
             this.users.push(result.items[i]);
           }
   
-          console.log(this.users);
+          // console.log(this.users);
 
         }
       });
     }else if(this.myForm.invalid){
-        console.log(this.myForm);
+        // console.log(this.myForm);
         Swal.fire({
           title: 'Formulario inválido',
           text: 'Valores de búsqueda inválidos',
@@ -97,7 +97,7 @@ export class SearchComponent implements OnInit {
 
   searchError(){
     this.errors = this.myForm.controls['username'].errors;
-    console.log(this.errors.hasOwnProperty('minlength'));
+    // console.log(this.errors.hasOwnProperty('minlength'));
   }
 
   createChart(){
